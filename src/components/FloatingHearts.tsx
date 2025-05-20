@@ -16,20 +16,20 @@ const FloatingHearts: React.FC = () => {
   
   // Generate initial hearts
   useEffect(() => {
-    const initialHearts = Array.from({ length: 15 }, (_, i) => createHeart(i));
+    const initialHearts = Array.from({ length: 8 }, (_, i) => createHeart(i));
     setHearts(initialHearts);
     
     // Add a new heart every 3 seconds
     const interval = setInterval(() => {
       setHearts(prevHearts => {
         // Remove oldest heart if we have too many
-        const updatedHearts = prevHearts.length >= 25 
+        const updatedHearts = prevHearts.length >= 15 
           ? [...prevHearts.slice(1)] 
           : [...prevHearts];
         
         return [...updatedHearts, createHeart(Date.now())];
       });
-    }, 3000);
+    }, 5000);
     
     return () => clearInterval(interval);
   }, []);

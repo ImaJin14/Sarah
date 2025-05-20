@@ -33,7 +33,7 @@ const GiftReveal: React.FC<GiftRevealProps> = ({ onOpenGift, isOpen }) => {
         </h2>
         
         <p className="text-lg text-gray-700 mb-8">
-          I've prepared something special just for you. Click below to reveal your birthday surprise.
+          I've prepared something special just for you. Hope you like it!
         </p>
         
         <motion.button
@@ -76,18 +76,19 @@ const GiftReveal: React.FC<GiftRevealProps> = ({ onOpenGift, isOpen }) => {
                 <h3 className="text-2xl md:text-3xl font-serif font-bold text-purple-800 mb-6">
                   My Gift to You
                 </h3>
-                
-                {/* Replace this with your actual gift content */}
+
                 <div className="mb-6">
-                  <div className="w-full h-64 mb-6 bg-pink-100 rounded-lg flex items-center justify-center">
-                    {/* This is a placeholder for your actual gift (e.g., a video, image, poem, etc.) */}
-                    <p className="text-purple-600 font-medium px-8">
-                      This could be a video message, a digital gift card, a special poem, or any other surprise you want to include.
-                    </p>
-                  </div>
-                  
-                  <p className="text-lg text-gray-700">
-                    This is just the beginning of a day full of surprises. I have more planned for you, my love. Check your phone for the next clue!
+                  <div className="w-full h-64 mb-6 bg-pink-100 rounded-lg flex items-center justify-center overflow-hidden">
+                    <video
+                      className="w-full h-full object-cover rounded-lg"
+                      controls
+                      autoPlay>
+                      <source src="src/img/video_2025-05-20_18-00-20.mp4" type="video/mp4" />
+                      Your browser does not support the video tag.
+                    </video>
+                  </div>  
+                  <p className="text-lg italic text-black-600 dark:text-black-300">
+                    This is but a moment in the beautiful cycle God has designed, where every season has its purpose, every sunrise holds a promise. Like the lilies of the field and the turning of the leaves, your life blooms in divine rhythm. What comes next is a whisper from heaven... sacred and unfolding.
                   </p>
                 </div>
               </div>

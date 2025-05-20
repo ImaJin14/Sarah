@@ -11,10 +11,10 @@ const Footer = () => {
       </div>
       
       <p className="text-purple-700 mt-2 text-sm">
-        Happy Birthday, my love! Today and always.
+        Happy Birthday, my love! Always and Forever.
       </p>
     </footer>
   );
 };
 
-export default Footer;
+export default React.memo(Footer);

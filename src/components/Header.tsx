@@ -20,7 +20,7 @@ const Header = () => {
         transition={{ delay: 0.3, duration: 0.8 }}
         className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-red-600 mb-4"
       >
-        Happy Birthday, My Love
+        Happy Birthday, Sarah
       </motion.h1>
       
       <motion.p

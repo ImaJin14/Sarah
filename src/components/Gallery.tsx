@@ -8,27 +8,46 @@ interface Image {
 }
 
 const Gallery = () => {
-  // Sample images - replace with your own
   const images: Image[] = [
     {
-      url: "https://images.pexels.com/photos/1024993/pexels-photo-1024993.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-      caption: "The day we first met"
+      url: "src/img/photo_2_2025-05-20_17-15-33.jpg",
+      caption: "The day we first met – where every chapter of grace began. ❤️"
     },
     {
-      url: "https://images.pexels.com/photos/3331094/pexels-photo-3331094.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-      caption: "Our first vacation together"
+      url: "src/img/photo_2025-05-20_17-44-39.jpg",
+      caption: "“For I know the plans I have for you...” – Jeremiah 29:11 🌸"
     },
     {
-      url: "https://images.pexels.com/photos/2253275/pexels-photo-2253275.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-      caption: "That sunset we'll never forget"
+      url: "src/img/photo_3_2025-05-20_17-15-33.jpg",
+      caption: "“To everything there is a season...” – Ecclesiastes 3:1 🍂"
     },
     {
-      url: "https://images.pexels.com/photos/1415131/pexels-photo-1415131.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-      caption: "Our favorite coffee shop"
+      url: "src/img/photo_4_2025-05-20_17-15-33.jpg",
+      caption: "In the wilderness, He carried you – Deuteronomy 1:31 💫"
     },
     {
-      url: "https://images.pexels.com/photos/1024969/pexels-photo-1024969.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-      caption: "The day I knew you were the one"
+      url: "src/img/photo_5_2025-05-20_17-15-33.jpg",
+      caption: "“My grace is sufficient for thee...” – 2 Corinthians 12:9 🙏"
+    },
+    {
+      url: "src/img/photo_6_2025-05-20_17-15-33.jpg",
+      caption: "“Sit still, my daughter, until you see how the matter will turn out.” – Ruth 3:18 🌾"
+    },
+    {
+      url: "src/img/photo_7_2025-05-20_17-15-33.jpg",
+      caption: "“I will ascend... I will exalt...” – Isaiah 14:13 🌠 (A reminder of the power of humility)"
+    },
+    {
+      url: "src/img/photo_9_2025-05-20_17-15-33.jpg",
+      caption: "Your joy is a light that even time respects ✨"
+    },
+    {
+      url: "src/img/photo_10_2025-05-20_17-15-33.jpg",
+      caption: "If grace had a face, it would look a lot like you 💖"
+    },
+    {
+      url: "src/img/photo_11_2025-05-20_17-15-33.jpg",
+      caption: "Heaven whispers through your smile – Happy Birthday, Sarah 🎂👑"
     }
   ];
 
@@ -43,23 +62,20 @@ const Gallery = () => {
     setCurrent(current === 0 ? images.length - 1 : current - 1);
   };
 
-  // Auto slide functionality
   useEffect(() => {
     let interval: ReturnType<typeof setInterval>;
-    
+
     if (isAutoPlaying) {
       interval = setInterval(() => {
         nextSlide();
       }, 5000);
     }
-    
+
     return () => clearInterval(interval);
   }, [current, isAutoPlaying]);
 
-  // Pause autoplay when user interacts with the gallery
   const handleUserInteraction = () => {
     setIsAutoPlaying(false);
-    // Resume autoplay after 15 seconds of inactivity
     setTimeout(() => setIsAutoPlaying(true), 15000);
   };
 
@@ -72,23 +88,24 @@ const Gallery = () => {
         transition={{ duration: 0.8 }}
         className="text-3xl md:text-4xl font-serif font-bold text-purple-800 text-center mb-8"
       >
-        Our Memories Together
+        Birthday Blessings for Sarah 💜
       </motion.h2>
       
-      <div className="relative h-[300px] md:h-[400px] lg:h-[500px] max-w-4xl mx-auto rounded-xl overflow-hidden shadow-xl">
+      <div className="relative h-[600px] w-[400px] md:h-[700px] md:w-[500px] mx-auto rounded-xl overflow-hidden shadow-xl">
         <AnimatePresence mode="wait">
           <motion.div
             key={current}
-            initial={{ opacity: 0, x: 100 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -100 }}
-            transition={{ duration: 0.7 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5 }}
             className="absolute inset-0"
           >
             <img 
               src={images[current].url} 
               alt={images[current].caption} 
-              className="w-full h-full object-cover" 
+              className="w-full h-full object-cover"
+              loading="lazy" 
             />
             <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-6">
               <p className="text-white text-lg md:text-xl font-medium">

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Header from './components/Header';
 import Gallery from './components/Gallery';
 import LoveLetter from './components/LoveLetter';
+import BirthdayCake from './components/BirthdayCake';
 import GiftReveal from './components/GiftReveal';
 import Footer from './components/Footer';
 import MusicPlayer from './components/MusicPlayer';
@@ -29,6 +30,15 @@ function App() {
       >
         <Header />
         
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5, duration: 0.8 }}
+          className="my-12"
+        >
+          <BirthdayCake />
+        </motion.div>
+
         <main className="mt-8 space-y-16">
           <Gallery />
           <LoveLetter />
