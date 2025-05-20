@@ -10,7 +10,7 @@ const MusicPlayer = () => {
 
   useEffect(() => {
     // Create the audio element only once
-    audioRef.current = new Audio('/alex-warren-ordinary.mp3');
+    audioRef.current = new Audio('/Sarah/alex-warren-ordinary.mp3');
     audioRef.current.loop = true;
     audioRef.current.volume = volume;
     
