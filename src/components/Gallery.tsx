@@ -102,7 +102,7 @@ const Gallery = () => {
             className="absolute inset-0"
           >
             <img 
-              src={images[current].url} 
+             src ={images[current].url} 
               alt={images[current].caption} 
               className="w-full h-full object-cover"
               loading="lazy" 
