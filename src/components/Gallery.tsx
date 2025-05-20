@@ -10,43 +10,43 @@ interface Image {
 const Gallery = () => {
   const images: Image[] = [
     {
-      url: "src/img/photo_2_2025-05-20_17-15-33.jpg",
+      url: "/img/photo_2_2025-05-20_17-15-33.jpg",
       caption: "The day we first met – where every chapter of grace began. ❤️"
     },
     {
-      url: "src/img/photo_2025-05-20_17-44-39.jpg",
+      url: "/img/photo_2025-05-20_17-44-39.jpg",
       caption: "“For I know the plans I have for you...” – Jeremiah 29:11 🌸"
     },
     {
-      url: "src/img/photo_3_2025-05-20_17-15-33.jpg",
+      url: "/img/photo_3_2025-05-20_17-15-33.jpg",
       caption: "“To everything there is a season...” – Ecclesiastes 3:1 🍂"
     },
     {
-      url: "src/img/photo_4_2025-05-20_17-15-33.jpg",
+      url: "/img/photo_4_2025-05-20_17-15-33.jpg",
       caption: "In the wilderness, He carried you – Deuteronomy 1:31 💫"
     },
     {
-      url: "src/img/photo_5_2025-05-20_17-15-33.jpg",
+      url: "/img/photo_5_2025-05-20_17-15-33.jpg",
       caption: "“My grace is sufficient for thee...” – 2 Corinthians 12:9 🙏"
     },
     {
-      url: "src/img/photo_6_2025-05-20_17-15-33.jpg",
+      url: "/img/photo_6_2025-05-20_17-15-33.jpg",
       caption: "“Sit still, my daughter, until you see how the matter will turn out.” – Ruth 3:18 🌾"
     },
     {
-      url: "src/img/photo_7_2025-05-20_17-15-33.jpg",
+      url: "/img/photo_7_2025-05-20_17-15-33.jpg",
       caption: "“I will ascend... I will exalt...” – Isaiah 14:13 🌠 (A reminder of the power of humility)"
     },
     {
-      url: "src/img/photo_9_2025-05-20_17-15-33.jpg",
+      url: "/img/photo_9_2025-05-20_17-15-33.jpg",
       caption: "Your joy is a light that even time respects ✨"
     },
     {
-      url: "src/img/photo_10_2025-05-20_17-15-33.jpg",
+      url: "/img/photo_10_2025-05-20_17-15-33.jpg",
       caption: "If grace had a face, it would look a lot like you 💖"
     },
     {
-      url: "src/img/photo_11_2025-05-20_17-15-33.jpg",
+      url: "/img/photo_11_2025-05-20_17-15-33.jpg",
       caption: "Heaven whispers through your smile – Happy Birthday, Sarah 🎂👑"
     }
   ];

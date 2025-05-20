@@ -83,7 +83,7 @@ const GiftReveal: React.FC<GiftRevealProps> = ({ onOpenGift, isOpen }) => {
                       className="w-full h-full object-cover rounded-lg"
                       controls
                       autoPlay>
-                      <source src="src/img/video_2025-05-20_18-00-20.mp4" type="video/mp4" />
+                      <source src="/public/video_2025-05-20_18-00-20.mp4" type="video/mp4" />
                       Your browser does not support the video tag.
                     </video>
                   </div>  

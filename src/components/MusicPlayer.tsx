@@ -3,14 +3,14 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Volume2, VolumeX } from 'lucide-react';
 
 const MusicPlayer = () => {
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(true);
   const [volume, setVolume] = useState(0.5);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [audioLoaded, setAudioLoaded] = useState(false);
 
   useEffect(() => {
     // Create the audio element only once
-    audioRef.current = new Audio('/src/components/alex-warren-ordinary.mp3');
+    audioRef.current = new Audio('/alex-warren-ordinary.mp3');
     audioRef.current.loop = true;
     audioRef.current.volume = volume;
     
