@@ -1,8 +1,9 @@
 {
-  "name": "birthday-website-for-my-love",
+  "name": "Sarah",
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "homepage": "https://ImaJin14.github.io/Sarah",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

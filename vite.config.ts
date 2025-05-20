@@ -7,5 +7,5 @@ export default defineConfig({
   optimizeDeps: {
     exclude: ['lucide-react'],
   },
-   base: '/birthday-website-for-my-love/',
+   base: '/Sarah/',
 });
