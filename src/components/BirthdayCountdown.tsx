@@ -17,11 +17,11 @@ const BirthdayCountdown: React.FC = () => {
   const getNextBirthday = () => {
     const now = new Date();
     const currentYear = now.getFullYear();
-    let birthday = new Date(currentYear, 5, 15); // June 15th (month is 0-indexed)
+    let birthday = new Date(currentYear, 4, 27); // May 27th (month is 0-indexed)
     
     // If birthday has passed this year, set it to next year
     if (birthday < now) {
-      birthday = new Date(currentYear + 1, 5, 15);
+      birthday = new Date(currentYear + 1, 4, 27);
     }
     
     return birthday;
@@ -44,7 +44,7 @@ const BirthdayCountdown: React.FC = () => {
       } else {
         // Check if it's today
         const today = new Date();
-        const birthdayToday = new Date(today.getFullYear(), 5, 15);
+        const birthdayToday = new Date(today.getFullYear(), 4, 27);
         setIsToday(today.toDateString() === birthdayToday.toDateString());
       }
     };
@@ -57,15 +57,15 @@ const BirthdayCountdown: React.FC = () => {
 
   if (isToday) {
     return (
-      <section className="py-16 bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-2xl">
+      <section className="py-16 bg-gradient-to-r from-pink-400 to-purple-600 text-white rounded-2xl">
         <div className="container mx-auto px-6 text-center">
           <motion.div
-            initial={{ opacity: 0, scale: 0.5 }}
+            initial={{ opacity: 0, scale: 0.4 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5 }}
+            transition={{ duration: 0.4 }}
           >
             <Gift className="w-16 h-16 mx-auto mb-4" />
-            <h2 className="text-5xl font-serif font-bold mb-4">
+            <h2 className="text-4xl font-serif font-bold mb-4">
               🎉 It's Sarah's Birthday! 🎉
             </h2>
             <p className="text-xl opacity-90">
@@ -125,7 +125,7 @@ const BirthdayCountdown: React.FC = () => {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
+          transition={{ delay: 0.4 }}
           className="mt-8"
         >
           <Calendar className="w-6 h-6 inline mr-2" />

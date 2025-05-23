@@ -15,7 +15,7 @@ interface Photo {
 const photos: Photo[] = [
   {
     id: 1,
-    src: "/gallery/photo1.jpg",
+    src: "public/img/photo_2_2025-05-20_17-15-33.jpg",
     alt: "Sarah smiling",
     caption: "Your beautiful smile that lights up my world",
     date: "2023-06-15",
@@ -24,7 +24,7 @@ const photos: Photo[] = [
   },
   {
     id: 2,
-    src: "/gallery/photo2.jpg",
+    src: "public/img/photo_2_2025-05-20_17-15-33.jpg",
     alt: "Us together",
     caption: "Our first adventure together",
     date: "2023-03-20",
@@ -33,7 +33,7 @@ const photos: Photo[] = [
   },
   {
     id: 3,
-    src: "/gallery/photo3.jpg",
+    src: "public/img/photo_2_2025-05-20_17-15-33.jpg",
     alt: "Sarah laughing",
     caption: "That contagious laugh of yours",
     date: "2023-08-10",
@@ -42,7 +42,7 @@ const photos: Photo[] = [
   },
   {
     id: 4,
-    src: "/gallery/photo4.jpg",
+    src: "public/img/photo_2_2025-05-20_17-15-33.jpg",
     alt: "Sunset moment",
     caption: "Watching the sunset in your eyes",
     date: "2023-09-22",
@@ -51,7 +51,7 @@ const photos: Photo[] = [
   },
   {
     id: 5,
-    src: "/gallery/photo5.jpg",
+    src: "public/img/photo_2_2025-05-20_17-15-33.jpg",
     alt: "Sarah cooking",
     caption: "Chef Sarah in action",
     date: "2023-11-05",
@@ -60,7 +60,7 @@ const photos: Photo[] = [
   },
   {
     id: 6,
-    src: "/gallery/photo6.jpg",
+    src: "public/img/photo_2_2025-05-20_17-15-33.jpg",
     alt: "Winter walk",
     caption: "Winter wonderland with you",
     date: "2023-12-18",

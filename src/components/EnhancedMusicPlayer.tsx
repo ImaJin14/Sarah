@@ -17,8 +17,8 @@ const playlist: Song[] = [
     id: 1,
     title: "Perfect",
     artist: "Ed Sheeran",
-    albumArt: "/music/perfect-cover.jpg",
-    audioUrl: "/music/perfect.mp3",
+    albumArt: "/Sarah/img/perfect-cover.jpg",
+    audioUrl: "/Sarah/perfect.mp3",
     duration: "4:23",
     meaning: "This song reminds me of our first dance together."
   },
@@ -26,8 +26,8 @@ const playlist: Song[] = [
     id: 2,
     title: "All of Me",
     artist: "John Legend",
-    albumArt: "/music/all-of-me-cover.jpg",
-    audioUrl: "/music/all-of-me.mp3",
+    albumArt: "/Sarah/img/all-of-me-cover.jpg",
+    audioUrl: "/Sarah/all-of-me.mp3",
     duration: "4:29",
     meaning: "Because you love all of me, and I love all of you."
   },
@@ -35,29 +35,29 @@ const playlist: Song[] = [
     id: 3,
     title: "Thinking Out Loud",
     artist: "Ed Sheeran",
-    albumArt: "/music/thinking-out-loud-cover.jpg",
-    audioUrl: "/music/thinking-out-loud.mp3",
+    albumArt: "/Sarah/img/thinking-out-loud-cover.jpg",
+    audioUrl: "/Sarah/thinking-out-loud.mp3",
     duration: "4:41",
     meaning: "I want to love you until we're 70, and beyond."
-  },
-  {
-    id: 4,
-    title: "A Thousand Years",
-    artist: "Christina Perri",
-    albumArt: "/music/thousand-years-cover.jpg",
-    audioUrl: "/music/thousand-years.mp3",
-    duration: "4:45",
-    meaning: "I have loved you for a thousand years, and I'll love you for a thousand more."
-  },
-  {
-    id: 5,
-    title: "Can't Help Myself",
-    artist: "Four Tops",
-    albumArt: "/music/cant-help-myself-cover.jpg",
-    audioUrl: "/music/cant-help-myself.mp3",
-    duration: "2:44",
-    meaning: "Our song from that night we danced in the kitchen."
   }
+  // {
+  //   id: 4,
+  //   title: "A Thousand Years",
+  //   artist: "Christina Perri",
+  //   albumArt: "/Sarah/img/thousand-years-cover.jpg",
+  //   audioUrl: "/Sarah/thousand-years.mp3",
+  //   duration: "4:45",
+  //   meaning: "I have loved you for a thousand years, and I'll love you for a thousand more."
+  // },
+  // {
+  //   id: 5,
+  //   title: "Can't Help Myself",
+  //   artist: "Four Tops",
+  //   albumArt: "/Sarah/img/cant-help-myself-cover.jpg",
+  //   audioUrl: "/Sarah/cant-help-myself.mp3",
+  //   duration: "2:44",
+  //   meaning: "Our song from that night we danced in the kitchen."
+  //}
 ];
 
 const EnhancedMusicPlayer: React.FC = () => {
