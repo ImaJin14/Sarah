@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MessageCircle, Heart, Send, User } from 'lucide-react';
 
+import { db } from '../main';
+import { collection, query, orderBy, onSnapshot, addDoc, serverTimestamp, Firestore } from 'firebase/firestore';
+
 interface GuestMessage {
   id: string;
   name: string;
@@ -17,30 +20,29 @@ const GuestBook: React.FC = () => {
 
   // Load messages from localStorage on component mount
   useEffect(() => {
-    const savedMessages = localStorage.getItem('sarahBirthdayMessages');
-    if (savedMessages) {
-      try {
-        const parsedMessages = JSON.parse(savedMessages).map((msg: any) => ({
-          ...msg,
-          timestamp: new Date(msg.timestamp)
-        }));
-        setMessages(parsedMessages);
-      } catch (error) {
-        console.error('Error loading messages:', error);
-      }
-    }
-  }, []);
+    const messagesCollection = collection(db as Firestore, 'guestbook_messages');
+    const q = query(messagesCollection, orderBy('timestamp', 'desc'));
 
-  // Save messages to localStorage whenever messages change
-  useEffect(() => {
-    if (messages.length > 0) {
-      localStorage.setItem('sarahBirthdayMessages', JSON.stringify(messages));
-    }
-  }, [messages]);
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const messagesData = snapshot.docs.map(doc => ({
+        id: doc.id, // Explicitly include the document ID
+        name: doc.data().name,
+        message: doc.data().message,
+        timestamp: doc.data().timestamp?.toDate() // Convert Firestore Timestamp to Date
+      })) as GuestMessage[];
+      setMessages(messagesData);
+    });
+
+    // Clean up the listener when the component unmounts
+    return () => unsubscribe();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
+    // Remove localStorage remnants if any
+    localStorage.removeItem('sarahBirthdayMessages');
+
     if (!newMessage.name.trim() || !newMessage.message.trim()) {
       return;
     }
@@ -48,15 +50,15 @@ const GuestBook: React.FC = () => {
     setIsSubmitting(true);
 
     // Create new message
-    const message: GuestMessage = {
-      id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+    const messageData = {
       name: newMessage.name.trim(),
       message: newMessage.message.trim(),
-      timestamp: new Date()
+      // Use serverTimestamp() for a reliable timestamp
+      timestamp: serverTimestamp()
     };
 
-    // Add to messages (newest first)
-    setMessages(prev => [message, ...prev]);
+    const messagesCollection = collection(db as Firestore, 'guestbook_messages');
+    await addDoc(messagesCollection, messageData);
     
     // Reset form
     setNewMessage({ name: '', message: '' });
@@ -70,7 +72,11 @@ const GuestBook: React.FC = () => {
   };
 
   const formatDate = (date: Date) => {
-    return new Intl.DateTimeFormat('en-US', {
+    if (!(date instanceof Date) || isNaN(date.getTime())) {
+      return 'Invalid Date'; // Handle cases where timestamp is not a valid Date object
+    }
+
+     return new Intl.DateTimeFormat('en-US', {
       month: 'short',
       day: 'numeric',
       hour: '2-digit',
@@ -216,7 +222,7 @@ const GuestBook: React.FC = () => {
                             </h4>
                             <span className="text-sm text-gray-500 flex-shrink-0">
                               {formatDate(message.timestamp)}
-                            </span>
+                           </span>
                           </div>
                           
                           <p className="text-gray-700 leading-relaxed">
@@ -238,13 +244,12 @@ const GuestBook: React.FC = () => {
         </div>
 
         {/* Clear Messages Button (for testing/admin) */}
-        {messages.length > 0 && (
+        {/* {messages.length > 0 && (
           <div className="text-center mt-8">
             <button
               onClick={() => {
                 if (window.confirm('Are you sure you want to clear all messages? This cannot be undone.')) {
-                  setMessages([]);
-                  localStorage.removeItem('sarahBirthdayMessages');
+                  // Implement logic to clear messages from Firestore if needed (carefully!)
                 }
               }}
               className="text-sm text-gray-500 hover:text-gray-700 underline"
@@ -252,7 +257,7 @@ const GuestBook: React.FC = () => {
               Clear all messages
             </button>
           </div>
-        )}
+        )} */}
       </motion.div>
     </section>
   );
