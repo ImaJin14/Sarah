@@ -17,9 +17,9 @@ const favoriteThings: FavoriteThing[] = [
   {
     id: 1,
     category: "Drink",
-    title: "Morning Coffee",
+    title: "Morning Drink",
     description: "Your perfect cappuccino with extra foam",
-    image: "/favorites/coffee.jpg",
+    image: "/Sarah/img/photo_5_2025-05-24_00-29-17.jpg",
     icon: <Coffee className="w-6 h-6" />,
     color: "from-amber-400 to-orange-500",
     reason: "The way you close your eyes and smile with that first sip every morning"
@@ -29,7 +29,7 @@ const favoriteThings: FavoriteThing[] = [
     category: "Hobby",
     title: "Reading",
     description: "Lost in fantasy novels and poetry",
-    image: "/favorites/books.jpg",
+    image: "/Sarah/img/photo_1_2025-05-24_00-29-17.jpg",
     icon: <Book className="w-6 h-6" />,
     color: "from-blue-400 to-indigo-500",
     reason: "I love watching you get completely absorbed in your books"
@@ -39,7 +39,7 @@ const favoriteThings: FavoriteThing[] = [
     category: "Music",
     title: "Indie Folk",
     description: "Acoustic melodies and heartfelt lyrics",
-    image: "/favorites/music.jpg",
+    image: "/Sarah/img/photo_1_2025-05-24_00-38-10.jpg",
     icon: <Music className="w-6 h-6" />,
     color: "from-purple-400 to-pink-500",
     reason: "Your taste in music always introduces me to beautiful new songs"
@@ -49,7 +49,7 @@ const favoriteThings: FavoriteThing[] = [
     category: "Activity",
     title: "Photography",
     description: "Capturing moments and beautiful landscapes",
-    image: "/favorites/photography.jpg",
+    image: "/Sarah/img/photo_8_2025-05-20_17-15-33.jpg",
     icon: <Camera className="w-6 h-6" />,
     color: "from-green-400 to-teal-500",
     reason: "You see beauty in everything through your camera lens"
@@ -59,7 +59,7 @@ const favoriteThings: FavoriteThing[] = [
     category: "Art",
     title: "Watercolor Painting",
     description: "Creating dreamy, flowing artwork",
-    image: "/favorites/painting.jpg",
+    image: "/Sarah/img/photo_2_2025-05-24_00-38-10.jpg",
     icon: <Palette className="w-6 h-6" />,
     color: "from-pink-400 to-rose-500",
     reason: "Your paintings are as beautiful and gentle as your soul"
@@ -69,7 +69,7 @@ const favoriteThings: FavoriteThing[] = [
     category: "Nature",
     title: "Sunflowers",
     description: "Bright, cheerful, and always facing the sun",
-    image: "/favorites/sunflowers.jpg",
+    image: "/Sarah/img/photo_4_2025-05-24_00-29-17.jpg",
     icon: <Flower className="w-6 h-6" />,
     color: "from-yellow-400 to-orange-400",
     reason: "They remind me of you - always bright and bringing joy to everyone"
@@ -77,9 +77,9 @@ const favoriteThings: FavoriteThing[] = [
   {
     id: 7,
     category: "Food",
-    title: "Homemade Pasta",
+    title: "Fun meal Games",
     description: "Made from scratch with love",
-    image: "/favorites/pasta.jpg",
+    image: "/Sarah/img/photo_2_2025-05-24_00-29-17.jpg",
     icon: <Heart className="w-6 h-6" />,
     color: "from-red-400 to-pink-400",
     reason: "Every time you cook, you put so much love into it"
@@ -89,7 +89,7 @@ const favoriteThings: FavoriteThing[] = [
     category: "Time",
     title: "Stargazing",
     description: "Quiet nights under the infinite sky",
-    image: "/favorites/stars.jpg",
+    image: "/Sarah/img/photo_6_2025-05-24_00-29-17.jpg",
     icon: <Star className="w-6 h-6" />,
     color: "from-indigo-400 to-purple-500",
     reason: "Those peaceful moments when it's just us and the universe"
@@ -108,7 +108,7 @@ const FavoriteThings: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           className="text-4xl font-serif text-center mb-4 text-purple-800"
         >
-          Sarah's Favorite Things
+          /Sarah's Favorite Things
         </motion.h2>
         <p className="text-center text-gray-600 mb-12">
           All the little things that make you uniquely wonderful

@@ -94,7 +94,7 @@ const GuestBook: React.FC = () => {
         className="max-w-4xl mx-auto"
       >
         <div className="text-center mb-12">
-          <MessageCircle className="h-12 w-12 mx-auto text-purple-600 mb-4" />
+          {/* <MessageCircle className="h-12 w-12 mx-auto text-purple-600 mb-4" /> */}
           <h2 className="text-3xl md:text-4xl font-serif font-bold text-purple-800 mb-4">
             Birthday Guest Book
           </h2>

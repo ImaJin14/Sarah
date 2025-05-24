@@ -18,7 +18,7 @@ const videoMessages: VideoMessage[] = [
     title: "Good Morning Message",
     description: "A special morning message just for you",
     thumbnail: "/videos/morning-thumb.jpg",
-    videoUrl: "/videos/morning-message.mp4",
+    videoUrl: "public/Sarah-3.MOV",
     duration: "2:30",
     date: "2024-01-15"
   },

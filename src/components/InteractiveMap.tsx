@@ -15,8 +15,8 @@ const locations: Location[] = [
   {
     id: 1,
     name: "Where We Met",
-    description: "The coffee shop where our eyes first met and everything changed.",
-    date: "2020-01-15",
+    description: "I remember the we had a conversation on TikTok about a trend.",
+    date: "2023-07-26",
     coordinates: { x: 25, y: 35 },
     image: "/locations/coffee-shop.jpg"
   },

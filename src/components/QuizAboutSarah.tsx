@@ -69,15 +69,15 @@ const QuizAboutSarah: React.FC = () => {
     },
     {
       id: 5,
-      question: "Sarah's favorite way to spend a Sunday is:",
+      question: "Sarah's favorite Colour is:",
       options: [
-        "Sleeping in",
-        "Going to church and fellowship",
-        "Watching movies",
-        "Going out with friends"
+        "Red",
+        "Blue",
+        "Purple",
+        "black"
       ],
       correct: 1,
-      explanation: "Sunday worship and fellowship fill Sarah's heart with joy ⛪"
+      explanation: "Sarah loves black not because its dark, but because it's bold, refined, protective, empowering, versatile, and expressive - Just like her! 🖤"
     }
   ];
 
