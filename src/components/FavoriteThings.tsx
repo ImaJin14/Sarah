@@ -108,7 +108,7 @@ const FavoriteThings: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           className="text-4xl font-serif text-center mb-4 text-purple-800"
         >
-          /Sarah's Favorite Things
+          Sarah's Favorite Things
         </motion.h2>
         <p className="text-center text-gray-600 mb-12">
           All the little things that make you uniquely wonderful
