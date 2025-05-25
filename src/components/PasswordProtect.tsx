@@ -95,7 +95,7 @@ const PasswordProtect: React.FC<PasswordProtectProps> = ({
           </h2>
           
           <p className="text-purple-600">
-            Enter the password to unlock these love notes
+            Enter the password to unlock
           </p>
         </div>
 
@@ -159,7 +159,7 @@ const PasswordProtect: React.FC<PasswordProtectProps> = ({
             whileTap={{ scale: 0.98 }}
             disabled={!inputPassword.trim()}
           >
-            Unlock Love Notes 💕
+            Unlock💕
           </motion.button>
         </form>
 

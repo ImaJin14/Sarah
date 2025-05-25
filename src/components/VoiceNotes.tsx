@@ -1,82 +1,62 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { Play, Pause, Volume2, Heart } from "lucide-react";
-
-import { db, storage } from '../main';
-import {
-  collection,
-  getDocs,
-  addDoc,
-  serverTimestamp,
-  query,
-  orderBy,
-} from "firebase/firestore";
-import {
-  ref as storageRef,
-  uploadBytes,
-  getDownloadURL,
-} from "firebase/storage";
 
 interface VoiceNote {
   id: string;
   title: string;
   description: string;
   audioUrl: string;
-  duration?: string;
+  duration: string;
   date: string;
-  uploader: string;
-  waveform?: number[];
+  waveform: number[];
 }
 
+// Hardcoded voice notes data
+const hardcodedVoiceNotes: VoiceNote[] = [
+  {
+    id: "1",
+    title: "Good Morning Message",
+    description: "A sweet morning greeting just for you",
+    audioUrl: "/audio/morning-message.mp3",
+    duration: "1:23",
+    date: "2025-05-25T08:00:00.000Z",
+    waveform: [0.3, 0.7, 0.5, 0.9, 0.4, 0.8, 0.6, 0.2, 0.7, 0.5, 0.8, 0.3, 0.6, 0.9, 0.4, 0.7]
+  },
+  {
+    id: "2",
+    title: "Bedtime Story",
+    description: "A gentle story to help you sleep",
+    audioUrl: "/audio/bedtime-story.mp3",
+    duration: "3:45",
+    date: "2025-05-24T22:00:00.000Z",
+    waveform: [0.2, 0.4, 0.6, 0.3, 0.8, 0.5, 0.7, 0.4, 0.6, 0.9, 0.3, 0.5, 0.7, 0.4, 0.8, 0.6]
+  },
+  {
+    id: "3",
+    title: "Daily Encouragement",
+    description: "Some positive words to brighten your day",
+    audioUrl: "/audio/encouragement.mp3",
+    duration: "2:10",
+    date: "2025-05-23T14:30:00.000Z",
+    waveform: [0.5, 0.8, 0.4, 0.7, 0.6, 0.9, 0.3, 0.5, 0.8, 0.4, 0.7, 0.6, 0.2, 0.9, 0.5, 0.8]
+  },
+  {
+    id: "4",
+    title: "Weekend Plans",
+    description: "Talking about our upcoming weekend together",
+    audioUrl: "/audio/weekend-plans.mp3",
+    duration: "1:55",
+    date: "2025-05-22T17:15:00.000Z",
+    waveform: [0.4, 0.6, 0.8, 0.3, 0.7, 0.5, 0.9, 0.4, 0.6, 0.8, 0.2, 0.5, 0.7, 0.6, 0.9, 0.3]
+  }
+];
+
 const VoiceNotes: React.FC = () => {
-  const [voiceNotes, setVoiceNotes] = useState<VoiceNote[]>([]);
+  const [voiceNotes] = useState<VoiceNote[]>(hardcodedVoiceNotes);
   const [playingId, setPlayingId] = useState<string | null>(null);
   const [progress, setProgress] = useState<{ [key: string]: number }>({});
   const audioRefs = useRef<{ [key: string]: HTMLAudioElement }>({});
-
-  // For upload form
-  const [file, setFile] = useState<File | null>(null);
-  const [uploader, setUploader] = useState("");
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [uploading, setUploading] = useState(false);
-
-  useEffect(() => {
-    fetchVoiceNotes();
-  }, []);
-
-  const fetchVoiceNotes = async () => {
-    const q = query(collection(db, "voiceNotes"), orderBy("date", "desc"));
-    const querySnapshot = await getDocs(q);
-    const notes: VoiceNote[] = [];
-    querySnapshot.forEach((doc) => {
-      notes.push({ id: doc.id, ...(doc.data() as any) });
-    });
-    setVoiceNotes(notes);
-  };
-
-  // Extract duration and waveform when audio loads
-  const handleMetadataLoaded = async (voiceNote: VoiceNote) => {
-    const audio = audioRefs.current[voiceNote.id];
-    if (!audio) return;
-
-    const duration = audio.duration;
-    const formattedDuration = formatDuration(duration);
-
-    try {
-      const waveform = await extractWaveform(voiceNote.audioUrl);
-
-      // Update Firestore with duration and waveform
-      // (Optional: only update locally to avoid writes on every load)
-      setVoiceNotes((prev) =>
-        prev.map((v) =>
-          v.id === voiceNote.id ? { ...v, duration: formattedDuration, waveform } : v
-        )
-      );
-    } catch (error) {
-      console.error("Waveform extraction failed:", error);
-    }
-  };
 
   const togglePlay = (voiceNote: VoiceNote) => {
     const audio = audioRefs.current[voiceNote.id];
@@ -106,46 +86,6 @@ const VoiceNotes: React.FC = () => {
     setProgress((prev) => ({ ...prev, [voiceNote.id]: 0 }));
   };
 
-  // Upload audio file and metadata
-  const handleUpload = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!file || !uploader || !title) {
-      alert("Please fill all required fields and select a file.");
-      return;
-    }
-    setUploading(true);
-
-    try {
-      // Upload to Firebase Storage
-      const storageReference = storageRef(storage, `voiceNotes/${file.name}-${Date.now()}`);
-      await uploadBytes(storageReference, file);
-      const downloadURL = await getDownloadURL(storageReference);
-
-      // Add document to Firestore
-      await addDoc(collection(db, "voiceNotes"), {
-        title,
-        description,
-        audioUrl: downloadURL,
-        date: new Date().toISOString(),
-        uploader,
-      });
-
-      // Refresh list
-      await fetchVoiceNotes();
-
-      // Reset form
-      setFile(null);
-      setUploader("");
-      setTitle("");
-      setDescription("");
-    } catch (error) {
-      console.error("Upload failed:", error);
-      alert("Upload failed. Check console for details.");
-    } finally {
-      setUploading(false);
-    }
-  };
-
   return (
     <section className="py-16 bg-white rounded-2xl shadow-lg">
       <div className="container mx-auto px-6">
@@ -157,50 +97,6 @@ const VoiceNotes: React.FC = () => {
           Voice Messages for You
         </motion.h2>
         <p className="text-center text-gray-600 mb-12">My voice, just for your ears</p>
-
-        {/* Upload Form */}
-        <form
-          onSubmit={handleUpload}
-          className="max-w-lg mx-auto mb-12 p-6 bg-gray-50 rounded-xl shadow"
-        >
-          <h3 className="mb-4 font-semibold text-lg text-gray-700">Upload New Voice Note</h3>
-          <input
-            type="text"
-            placeholder="Uploader Name"
-            value={uploader}
-            onChange={(e) => setUploader(e.target.value)}
-            required
-            className="w-full mb-3 p-2 border rounded"
-          />
-          <input
-            type="text"
-            placeholder="Title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            required
-            className="w-full mb-3 p-2 border rounded"
-          />
-          <textarea
-            placeholder="Description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            className="w-full mb-3 p-2 border rounded"
-          />
-          <input
-            type="file"
-            accept="audio/*"
-            onChange={(e) => setFile(e.target.files?.[0] || null)}
-            required
-            className="mb-4"
-          />
-          <button
-            type="submit"
-            disabled={uploading}
-            className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 disabled:opacity-50"
-          >
-            {uploading ? "Uploading..." : "Upload"}
-          </button>
-        </form>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
           {voiceNotes.map((voiceNote, index) => (
@@ -216,8 +112,6 @@ const VoiceNotes: React.FC = () => {
                   if (el) audioRefs.current[voiceNote.id] = el;
                 }}
                 src={voiceNote.audioUrl}
-                preload="metadata"
-                onLoadedMetadata={() => handleMetadataLoaded(voiceNote)}
                 onTimeUpdate={() => handleTimeUpdate(voiceNote)}
                 onEnded={() => handleEnded(voiceNote)}
               />
@@ -239,15 +133,10 @@ const VoiceNotes: React.FC = () => {
                 <div className="flex-1">
                   <h3 className="font-semibold text-gray-800 mb-1">{voiceNote.title}</h3>
                   <p className="text-sm text-gray-600">{voiceNote.description}</p>
-                  <p className="text-xs text-gray-500 italic mt-1">
-                    Uploaded by: {voiceNote.uploader}
-                  </p>
                 </div>
 
                 <div className="text-right">
-                  <div className="text-sm text-gray-500 mb-1">
-                    {voiceNote.duration || "Loading..."}
-                  </div>
+                  <div className="text-sm text-gray-500 mb-1">{voiceNote.duration}</div>
                   <div className="text-xs text-gray-400">
                     {new Date(voiceNote.date).toLocaleDateString()}
                   </div>
@@ -256,7 +145,7 @@ const VoiceNotes: React.FC = () => {
 
               {/* Waveform */}
               <div className="flex items-center gap-1 mb-4 h-8">
-                {(voiceNote.waveform || new Array(16).fill(0.2)).map((height, i) => (
+                {voiceNote.waveform.map((height, i) => (
                   <motion.div
                     key={i}
                     className={`w-1 rounded-full ${
@@ -299,32 +188,5 @@ const VoiceNotes: React.FC = () => {
     </section>
   );
 };
-
-function formatDuration(seconds: number): string {
-  const min = Math.floor(seconds / 60);
-  const sec = Math.floor(seconds % 60);
-  return `${min}:${sec < 10 ? "0" : ""}${sec}`;
-}
-
-async function extractWaveform(audioUrl: string, bars = 16): Promise<number[]> {
-  const response = await fetch(audioUrl);
-  const arrayBuffer = await response.arrayBuffer();
-  const audioContext = new AudioContext();
-  const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
-
-  const rawData = audioBuffer.getChannelData(0); // Get PCM data
-  const samplesPerBar = Math.floor(rawData.length / bars);
-  const waveform: number[] = [];
-
-  for (let i = 0; i < bars; i++) {
-    const start = i * samplesPerBar;
-    const segment = rawData.slice(start, start + samplesPerBar);
-    const sum = segment.reduce((acc, val) => acc + Math.abs(val), 0);
-    waveform.push(sum / samplesPerBar);
-  }
-
-  const max = Math.max(...waveform);
-  return waveform.map((v) => v / max);
-}
 
 export default VoiceNotes;

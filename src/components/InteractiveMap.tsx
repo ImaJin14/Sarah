@@ -15,42 +15,42 @@ const locations: Location[] = [
   {
     id: 1,
     name: "Where We Met",
-    description: "I remember the we had a conversation on TikTok about a trend.",
+    description: "I remember we had a conversation on TikTok about a trend.",
     date: "2023-07-26",
     coordinates: { x: 25, y: 35 },
-    image: "/locations/coffee-shop.jpg"
+    image: "/Sarah/img/tiktok-phone.jpg"
   },
   {
     id: 2,
     name: "First Date",
-    description: "That little Italian restaurant where we talked until closing time.",
-    date: "2020-01-22",
+    description: "How about an Italian restaurant where we talked till closing time?",
+    date: "2026-03-14",
     coordinates: { x: 45, y: 55 },
-    image: "/locations/restaurant.jpg"
+    image: "/Sarah/img/valentine.jpg"
   },
   {
     id: 3,
     name: "Weekend Getaway",
-    description: "Our first weekend trip together - the beach house of memories.",
-    date: "2020-03-14",
+    description: "Our first weekend trip together – the beach house of memories.",
+    date: "2027-05-20",
     coordinates: { x: 75, y: 25 },
-    image: "/locations/beach.jpg"
+    image: "/Sarah/img/bed-beach.jpg"
   },
   {
     id: 4,
     name: "Concert Night",
-    description: "Dancing under the stars at that outdoor concert.",
-    date: "2020-07-20",
+    description: "We danced under the stars at an outdoor concert.",
+    date: "2027-05-15",
     coordinates: { x: 60, y: 75 },
-    image: "/locations/concert.jpg"
+    image: "/Sarah/img/back-view-crowd-fans-watching-live-performance-music-concert-night-copy-space.jpg"
   },
   {
     id: 5,
     name: "Home Sweet Home",
-    description: "The apartment we made our own little paradise.",
-    date: "2021-02-01",
+    description: "A place to call our own little paradise.",
+    date: "2030-01-01",
     coordinates: { x: 40, y: 40 },
-    image: "/locations/home.jpg"
+    image: "/Sarah/img/home.jpg"
   }
 ];
 
@@ -75,15 +75,15 @@ const InteractiveMap: React.FC = () => {
         <div className="relative max-w-4xl mx-auto">
           {/* Map Background */}
           <div className="relative w-full h-96 bg-gradient-to-br from-green-100 via-blue-50 to-purple-100 rounded-2xl overflow-hidden shadow-inner">
-            {/* Decorative elements to make it look more map-like */}
+            {/* Decorative Shapes */}
             <div className="absolute inset-0 opacity-20">
               <div className="absolute top-10 left-10 w-20 h-20 bg-blue-200 rounded-full"></div>
               <div className="absolute top-20 right-20 w-16 h-16 bg-green-200 rounded-full"></div>
               <div className="absolute bottom-20 left-1/3 w-12 h-12 bg-yellow-200 rounded-full"></div>
-              <div className="absolute bottom-10 right-10 w-24 h-8 bg-brown-200 rounded-lg"></div>
+              <div className="absolute bottom-10 right-10 w-24 h-8 bg-pink-200 rounded-lg"></div>
             </div>
 
-            {/* Location Pins */}
+            {/* Pins */}
             {locations.map((location, index) => (
               <motion.div
                 key={location.id}
@@ -102,19 +102,15 @@ const InteractiveMap: React.FC = () => {
                 <motion.div
                   whileHover={{ scale: 1.2 }}
                   whileTap={{ scale: 0.9 }}
-                  className={`relative ${
-                    hoveredLocation === location.id ? 'z-20' : 'z-10'
-                  }`}
+                  className={`relative ${hoveredLocation === location.id ? 'z-20' : 'z-10'}`}
                 >
                   <MapPin 
                     className={`w-8 h-8 transition-colors duration-200 ${
-                      hoveredLocation === location.id 
-                        ? 'text-pink-500' 
-                        : 'text-purple-500'
+                      hoveredLocation === location.id ? 'text-pink-500' : 'text-purple-500'
                     }`}
                     fill="currentColor"
                   />
-                  
+
                   {/* Tooltip */}
                   <AnimatePresence>
                     {hoveredLocation === location.id && (
@@ -130,7 +126,6 @@ const InteractiveMap: React.FC = () => {
                         <div className="text-xs text-gray-500">
                           {new Date(location.date).toLocaleDateString()}
                         </div>
-                        {/* Arrow */}
                         <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-white"></div>
                       </motion.div>
                     )}
@@ -141,7 +136,7 @@ const InteractiveMap: React.FC = () => {
           </div>
         </div>
 
-        {/* Location Details Modal */}
+        {/* Modal */}
         <AnimatePresence>
           {selectedLocation && (
             <motion.div
@@ -155,7 +150,7 @@ const InteractiveMap: React.FC = () => {
                 initial={{ scale: 0.8, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.8, opacity: 0 }}
-                className="bg-white rounded-2xl p-8 max-w-md w-full relative"
+                className="bg-white rounded-2xl p-6 max-w-md w-full relative overflow-hidden"
                 onClick={(e) => e.stopPropagation()}
               >
                 <button
@@ -164,9 +159,18 @@ const InteractiveMap: React.FC = () => {
                 >
                   <X className="w-6 h-6" />
                 </button>
-                
+
+                {/* Image */}
+                {selectedLocation.image && (
+                  <img 
+                    src={selectedLocation.image} 
+                    alt={selectedLocation.name} 
+                    className="w-full h-48 object-cover rounded-lg mb-4"
+                  />
+                )}
+
                 <div className="text-center">
-                  <MapPin className="w-12 h-12 text-purple-500 mx-auto mb-4" />
+                  <MapPin className="w-10 h-10 text-purple-500 mx-auto mb-2" />
                   <h3 className="text-2xl font-serif font-bold text-gray-800 mb-2">
                     {selectedLocation.name}
                   </h3>

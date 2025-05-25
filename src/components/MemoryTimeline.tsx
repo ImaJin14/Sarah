@@ -14,27 +14,27 @@ interface Memory {
 const memories: Memory[] = [
   {
     id: 1,
-    date: "2020-02-14",
+    date: "2026-02-14",
     title: "First Valentine's Day",
-    description: "Our first Valentine's Day together - you made everything magical.",
+    description: "I can't wait for our first Valentine's Day together - I know you'll make everything magical.",
     location: "Downtown Restaurant",
-    image: "/memories/valentine.jpg"
+    image: "/Sarah/img/valentine.jpg"
   },
   {
     id: 2,
-    date: "2020-06-15",
+    date: "2027-05-20",
     title: "Summer Adventure",
-    description: "That amazing road trip where we got lost but found so much joy.",
+    description: "We're going to take that amazing road trip we've been planning - who knows what adventures await!",
     location: "Coastal Highway",
-    image: "/memories/roadtrip.jpg"
+    image: "/Sarah/img/roadtrip.jpg"
   },
   {
     id: 3,
-    date: "2021-01-01",
+    date: "2028-01-01",
     title: "New Year, New Us",
-    description: "Starting the year together, making resolutions we actually kept.",
+    description: "We'll start the new year together, making resolutions and building our future side by side.",
     location: "Home",
-    image: "/memories/newyear.jpg"
+    image: "/Sarah/img/newyear.jpg"
   },
   // Add more memories here
 ];
@@ -73,6 +73,15 @@ const MemoryTimeline: React.FC = () => {
                   className="bg-gradient-to-r from-pink-100 to-purple-100 p-6 rounded-lg shadow-md cursor-pointer"
                   onClick={() => setSelectedMemory(memory)}
                 >
+                  {/* Memory Image */}
+                  {memory.image && (
+                    <img 
+                      src={memory.image} 
+                      alt={memory.title}
+                      className="w-full h-32 object-cover rounded-lg mb-4"
+                    />
+                  )}
+                  
                   <div className="flex items-center gap-2 mb-2">
                     <Calendar className="w-4 h-4 text-purple-600" />
                     <span className="text-sm text-purple-600 font-medium">
@@ -121,6 +130,15 @@ const MemoryTimeline: React.FC = () => {
               onClick={(e) => e.stopPropagation()}
             >
               <div className="text-center">
+                {/* Modal Image */}
+                {selectedMemory.image && (
+                  <img 
+                    src={selectedMemory.image} 
+                    alt={selectedMemory.title}
+                    className="w-full h-48 object-cover rounded-lg mb-4"
+                  />
+                )}
+                
                 <Heart className="w-8 h-8 text-pink-500 mx-auto mb-4" />
                 <h3 className="text-2xl font-serif font-bold text-gray-800 mb-2">
                   {selectedMemory.title}
