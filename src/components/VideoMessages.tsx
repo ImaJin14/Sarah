@@ -65,9 +65,32 @@ const VideoMessages: React.FC = () => {
     };
   }, [selectedVideo, audioManager]);
 
+  // Auto-play video when modal opens with new video
+  useEffect(() => {
+    if (selectedVideo && videoRef.current) {
+      const video = videoRef.current;
+      video.currentTime = 0; // Reset to beginning
+      
+      // Register with audio manager and play
+      audioManager.registerPlayer(
+        `video-modal-${selectedVideo.id}`,
+        pauseVideo,
+        video
+      );
+      
+      // Start playing the video
+      video.play().then(() => {
+        setIsPlaying(true);
+      }).catch((error) => {
+        console.log('Auto-play prevented by browser:', error);
+        setIsPlaying(false);
+      });
+    }
+  }, [selectedVideo]);
+
   const openVideoModal = (video: VideoMessage) => {
     setSelectedVideo(video);
-    setIsPlaying(false);
+    setIsPlaying(false); // Will be set to true in useEffect after play starts
   };
 
   const closeVideoModal = () => {
@@ -215,6 +238,7 @@ const VideoMessages: React.FC = () => {
                       src={selectedVideo.videoUrl}
                       className="w-full h-80 object-contain bg-black"
                       controls={false}
+                      muted={isMuted}
                       onPlay={handleVideoPlay}
                       onPause={handleVideoPause}
                     />
