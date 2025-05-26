@@ -1,6 +1,7 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Play, Pause, Volume2, Heart } from "lucide-react";
+import GlobalAudioManager from './AudioManager';
 
 interface VoiceNote {
   id: string;
@@ -18,7 +19,7 @@ const hardcodedVoiceNotes: VoiceNote[] = [
     id: "1",
     title: "Good Morning Message",
     description: "A sweet morning greeting just for you",
-    audioUrl: "/audio/morning-message.mp3",
+    audioUrl: "/Sarah/ssstik.io_1748288363615.mp4",
     duration: "1:23",
     date: "2025-05-25T08:00:00.000Z",
     waveform: [0.3, 0.7, 0.5, 0.9, 0.4, 0.8, 0.6, 0.2, 0.7, 0.5, 0.8, 0.3, 0.6, 0.9, 0.4, 0.7]
@@ -27,7 +28,7 @@ const hardcodedVoiceNotes: VoiceNote[] = [
     id: "2",
     title: "Bedtime Story",
     description: "A gentle story to help you sleep",
-    audioUrl: "/audio/bedtime-story.mp3",
+    audioUrl: "/Sarah/Psalm 4-8.mp4",
     duration: "3:45",
     date: "2025-05-24T22:00:00.000Z",
     waveform: [0.2, 0.4, 0.6, 0.3, 0.8, 0.5, 0.7, 0.4, 0.6, 0.9, 0.3, 0.5, 0.7, 0.4, 0.8, 0.6]
@@ -36,7 +37,7 @@ const hardcodedVoiceNotes: VoiceNote[] = [
     id: "3",
     title: "Daily Encouragement",
     description: "Some positive words to brighten your day",
-    audioUrl: "/audio/encouragement.mp3",
+    audioUrl: "/Sarah/ssstik.io_1748288330972.mp3",
     duration: "2:10",
     date: "2025-05-23T14:30:00.000Z",
     waveform: [0.5, 0.8, 0.4, 0.7, 0.6, 0.9, 0.3, 0.5, 0.8, 0.4, 0.7, 0.6, 0.2, 0.9, 0.5, 0.8]
@@ -45,7 +46,7 @@ const hardcodedVoiceNotes: VoiceNote[] = [
     id: "4",
     title: "Weekend Plans",
     description: "Talking about our upcoming weekend together",
-    audioUrl: "/audio/weekend-plans.mp3",
+    audioUrl: "/Sarah/p4-8.mp3",
     duration: "1:55",
     date: "2025-05-22T17:15:00.000Z",
     waveform: [0.4, 0.6, 0.8, 0.3, 0.7, 0.5, 0.9, 0.4, 0.6, 0.8, 0.2, 0.5, 0.7, 0.6, 0.9, 0.3]
@@ -57,6 +58,24 @@ const VoiceNotes: React.FC = () => {
   const [playingId, setPlayingId] = useState<string | null>(null);
   const [progress, setProgress] = useState<{ [key: string]: number }>({});
   const audioRefs = useRef<{ [key: string]: HTMLAudioElement }>({});
+  const audioManager = GlobalAudioManager.getInstance();
+
+  useEffect(() => {
+    return () => {
+      // Cleanup when component unmounts
+      voiceNotes.forEach(voiceNote => {
+        audioManager.unregisterPlayer(`voice-note-${voiceNote.id}`);
+      });
+    };
+  }, [voiceNotes, audioManager]);
+
+  const pauseAudio = (voiceNoteId: string) => {
+    const audio = audioRefs.current[voiceNoteId];
+    if (audio && !audio.paused) {
+      audio.pause();
+      setPlayingId(null);
+    }
+  };
 
   const togglePlay = (voiceNote: VoiceNote) => {
     const audio = audioRefs.current[voiceNote.id];
@@ -65,10 +84,24 @@ const VoiceNotes: React.FC = () => {
     if (playingId === voiceNote.id) {
       audio.pause();
       setPlayingId(null);
+      audioManager.unregisterPlayer(`voice-note-${voiceNote.id}`);
     } else {
+      // Stop any currently playing audio
       if (playingId !== null) {
-        audioRefs.current[playingId]?.pause();
+        const currentAudio = audioRefs.current[playingId];
+        if (currentAudio) {
+          currentAudio.pause();
+        }
+        audioManager.unregisterPlayer(`voice-note-${playingId}`);
       }
+
+      // Register with audio manager before playing
+      audioManager.registerPlayer(
+        `voice-note-${voiceNote.id}`,
+        () => pauseAudio(voiceNote.id),
+        audio
+      );
+
       audio.play();
       setPlayingId(voiceNote.id);
     }
@@ -84,6 +117,13 @@ const VoiceNotes: React.FC = () => {
   const handleEnded = (voiceNote: VoiceNote) => {
     setPlayingId(null);
     setProgress((prev) => ({ ...prev, [voiceNote.id]: 0 }));
+    audioManager.unregisterPlayer(`voice-note-${voiceNote.id}`);
+  };
+
+  const handlePause = (voiceNote: VoiceNote) => {
+    if (playingId === voiceNote.id) {
+      setPlayingId(null);
+    }
   };
 
   return (
@@ -114,6 +154,7 @@ const VoiceNotes: React.FC = () => {
                 src={voiceNote.audioUrl}
                 onTimeUpdate={() => handleTimeUpdate(voiceNote)}
                 onEnded={() => handleEnded(voiceNote)}
+                onPause={() => handlePause(voiceNote)}
               />
 
               <div className="flex items-center gap-4 mb-4">

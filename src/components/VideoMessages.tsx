@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Play, Pause, Volume2, VolumeX, Maximize2, Heart } from 'lucide-react';
+import GlobalAudioManager from './AudioManager';
 
 interface VideoMessage {
   id: number;
@@ -21,22 +22,22 @@ const initialVideoMessages: VideoMessage[] = [
   {
     id: 2,
     title: "Our Adventure Compilation",
-    description: "A compilation of our best adventures together",
-    videoUrl: "/videos/adventure-compilation.mp4",
+    description: "A compilation of how I see our best adventures together",
+    videoUrl: "/Sarah/week.mp4",
     date: "2024-02-14"
   },
   {
     id: 3,
     title: "Why I Love You",
-    description: "All the reasons why you're amazing",
-    videoUrl: "/videos/why-i-love-you.mp4",
+    description: "All the reasons why you're amazing, captured in this heartfelt video are words aimed to celebrate your very birth which makes my vision of a future possible",
+    videoUrl: "/Sarah/wilu.mp4",
     date: "2024-03-10"
   },
   {
     id: 4,
     title: "Birthday Surprise",
-    description: "A special birthday surprise message",
-    videoUrl: "/videos/birthday-surprise.mp4",
+    description: "A special birthday surprise message from my very own heart, I owe you a gift and i'll get it to you soon when i figure out how best to!",
+    videoUrl: "/Sarah/Sarah-M.mp4",
     date: "2024-06-15"
   }
 ];
@@ -53,6 +54,16 @@ const VideoMessages: React.FC = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const audioManager = GlobalAudioManager.getInstance();
+
+  useEffect(() => {
+    return () => {
+      // Cleanup when component unmounts
+      if (selectedVideo) {
+        audioManager.unregisterPlayer(`video-modal-${selectedVideo.id}`);
+      }
+    };
+  }, [selectedVideo, audioManager]);
 
   const openVideoModal = (video: VideoMessage) => {
     setSelectedVideo(video);
@@ -60,19 +71,37 @@ const VideoMessages: React.FC = () => {
   };
 
   const closeVideoModal = () => {
+    if (selectedVideo) {
+      audioManager.unregisterPlayer(`video-modal-${selectedVideo.id}`);
+    }
     setSelectedVideo(null);
     setIsPlaying(false);
   };
 
+  const pauseVideo = () => {
+    const video = videoRef.current;
+    if (video && !video.paused) {
+      video.pause();
+      setIsPlaying(false);
+    }
+  };
+
   const togglePlay = () => {
     const video = videoRef.current;
-    if (video) {
+    if (video && selectedVideo) {
       if (isPlaying) {
         video.pause();
+        setIsPlaying(false);
       } else {
+        // Register with audio manager before playing
+        audioManager.registerPlayer(
+          `video-modal-${selectedVideo.id}`,
+          pauseVideo,
+          video
+        );
         video.play();
+        setIsPlaying(true);
       }
-      setIsPlaying(!isPlaying);
     }
   };
 
@@ -106,6 +135,14 @@ const VideoMessages: React.FC = () => {
     }));
   };
 
+  const handleVideoPlay = () => {
+    setIsPlaying(true);
+  };
+
+  const handleVideoPause = () => {
+    setIsPlaying(false);
+  };
+
   return (
     <section className="py-16 bg-gradient-to-r from-purple-50 to-pink-50 rounded-2xl">
       <div className="container mx-auto px-6">
@@ -134,7 +171,7 @@ const VideoMessages: React.FC = () => {
                 <video
                   src={video.videoUrl}
                   preload="metadata"
-                  className="rounded-lg w-full h-48 object-cover mb-2"
+                  className="rounded-lg w-full h-100 object-cover mb-2"
                   muted
                   onLoadedMetadata={(e) =>
                     handleLoadedMetadata(video.id, e.currentTarget.duration)
@@ -168,7 +205,7 @@ const VideoMessages: React.FC = () => {
                 initial={{ scale: 0.8, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.8, opacity: 0 }}
-                className="relative max-w-4xl w-full"
+                className="relative max-w-2xl w-full"
                 onClick={(e) => e.stopPropagation()}
               >
                 <div className="bg-white rounded-2xl overflow-hidden">
@@ -176,10 +213,10 @@ const VideoMessages: React.FC = () => {
                     <video
                       ref={videoRef}
                       src={selectedVideo.videoUrl}
-                      className="w-full h-96 object-contain bg-black"
+                      className="w-full h-80 object-contain bg-black"
                       controls={false}
-                      onPlay={() => setIsPlaying(true)}
-                      onPause={() => setIsPlaying(false)}
+                      onPlay={handleVideoPlay}
+                      onPause={handleVideoPause}
                     />
                     <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
                       <div className="flex items-center gap-4">

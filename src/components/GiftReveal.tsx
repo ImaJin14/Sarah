@@ -1,14 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Gift, X } from 'lucide-react';
+import GlobalAudioManager from './AudioManager';
 
 interface GiftRevealProps {
   onOpenGift: () => void;
-  isOpen: boolean;
 }
 
-const GiftReveal: React.FC<GiftRevealProps> = ({ onOpenGift, isOpen }) => {
+const GiftReveal: React.FC<GiftRevealProps> = ({ onOpenGift }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const audioManager = GlobalAudioManager.getInstance();
+
+  useEffect(() => {
+    return () => {
+      // Cleanup when component unmounts
+      if (isModalOpen) {
+        audioManager.unregisterPlayer('gift-video');
+      }
+    };
+  }, [isModalOpen, audioManager]);
 
   const handleOpenGift = () => {
     onOpenGift();
@@ -16,7 +27,32 @@ const GiftReveal: React.FC<GiftRevealProps> = ({ onOpenGift, isOpen }) => {
   };
 
   const closeModal = () => {
+    if (videoRef.current) {
+      audioManager.unregisterPlayer('gift-video');
+    }
     setIsModalOpen(false);
+  };
+
+  const pauseGiftVideo = () => {
+    if (videoRef.current && !videoRef.current.paused) {
+      videoRef.current.pause();
+    }
+  };
+
+  const handleVideoPlay = () => {
+    if (videoRef.current) {
+      // Register with audio manager when video starts playing
+      audioManager.registerPlayer(
+        'gift-video',
+        pauseGiftVideo,
+        videoRef.current
+      );
+    }
+  };
+
+  const handleVideoPause = () => {
+    // Could optionally unregister here, but keeping it registered
+    // allows the manager to pause this video if another player starts
   };
 
   return (
@@ -80,10 +116,14 @@ const GiftReveal: React.FC<GiftRevealProps> = ({ onOpenGift, isOpen }) => {
                 <div className="mb-6">
                   <div className="w-full h-64 mb-6 bg-pink-100 rounded-lg flex items-center justify-center overflow-hidden">
                     <video
+                      ref={videoRef}
                       className="w-full h-full object-cover rounded-lg"
                       controls
-                      autoPlay>
-                      <source src="/Sarah/video_2025-05-20_18-00-20.mp4" type="video/mp4" />
+                      autoPlay
+                      onPlay={handleVideoPlay}
+                      onPause={handleVideoPause}
+                    >
+                      <source src="/Sarah/gift.mp4" type="video/mp4" />
                       Your browser does not support the video tag.
                     </video>
                   </div>  

@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, Shuffle, Repeat, Music, Heart } from 'lucide-react';
+import GlobalAudioManager from './AudioManager'; // Adjust path as needed
 
 interface Song {
   id: number;
@@ -40,24 +41,6 @@ const playlist: Song[] = [
     duration: "4:41",
     meaning: "I want to love you until we're 70, and beyond."
   }
-  // {
-  //   id: 4,
-  //   title: "A Thousand Years",
-  //   artist: "Christina Perri",
-  //   albumArt: "/Sarah/img/thousand-years-cover.jpg",
-  //   audioUrl: "/Sarah/thousand-years.mp3",
-  //   duration: "4:45",
-  //   meaning: "I have loved you for a thousand years, and I'll love you for a thousand more."
-  // },
-  // {
-  //   id: 5,
-  //   title: "Can't Help Myself",
-  //   artist: "Four Tops",
-  //   albumArt: "/Sarah/img/cant-help-myself-cover.jpg",
-  //   audioUrl: "/Sarah/cant-help-myself.mp3",
-  //   duration: "2:44",
-  //   meaning: "Our song from that night we danced in the kitchen."
-  //}
 ];
 
 const EnhancedMusicPlayer: React.FC = () => {
@@ -71,21 +54,41 @@ const EnhancedMusicPlayer: React.FC = () => {
   const [showPlaylist, setShowPlaylist] = useState(false);
   
   const audioRef = useRef<HTMLAudioElement>(null);
+  const playerIdRef = useRef<string>(`enhanced-player-${Math.random().toString(36).substr(2, 9)}`);
+  const audioManager = GlobalAudioManager.getInstance();
+
+  // Pause function for audio manager
+  const pauseAudio = () => {
+    if (audioRef.current && isPlaying) {
+      audioRef.current.pause();
+      setIsPlaying(false);
+    }
+  };
 
   useEffect(() => {
     const audio = audioRef.current;
     if (audio) {
       audio.volume = volume;
       audio.muted = isMuted;
+      
+      // Register with audio manager when audio element is ready
+      audioManager.registerPlayer(playerIdRef.current, pauseAudio, audio);
     }
-  }, [volume, isMuted]);
+
+    return () => {
+      audioManager.unregisterPlayer(playerIdRef.current);
+    };
+  }, [volume, isMuted, currentSong]);
 
   const togglePlay = () => {
     const audio = audioRef.current;
     if (audio) {
       if (isPlaying) {
         audio.pause();
+        audioManager.unregisterPlayer(playerIdRef.current);
       } else {
+        // Register with audio manager before playing
+        audioManager.registerPlayer(playerIdRef.current, pauseAudio, audio);
         audio.play();
       }
       setIsPlaying(!isPlaying);
@@ -133,6 +136,14 @@ const EnhancedMusicPlayer: React.FC = () => {
       const rect = e.currentTarget.getBoundingClientRect();
       const percent = (e.clientX - rect.left) / rect.width;
       audio.currentTime = percent * audio.duration;
+    }
+  };
+
+  const handleSongSelect = (song: Song) => {
+    setCurrentSong(song);
+    // Re-register with audio manager when changing songs
+    if (audioRef.current) {
+      audioManager.registerPlayer(playerIdRef.current, pauseAudio, audioRef.current);
     }
   };
 
@@ -275,7 +286,7 @@ const EnhancedMusicPlayer: React.FC = () => {
                     <motion.div
                       key={song.id}
                       whileHover={{ backgroundColor: 'rgba(139, 69, 19, 0.05)' }}
-                      onClick={() => setCurrentSong(song)}
+                      onClick={() => handleSongSelect(song)}
                       className={`flex items-center gap-3 p-2 rounded-lg cursor-pointer transition-colors ${
                         currentSong.id === song.id ? 'bg-purple-100' : ''
                       }`}

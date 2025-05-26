@@ -19,19 +19,81 @@ import BucketList from './components/BucketList';
 import GuestBook from './components/GuestBook';
 import FullscreenCountdown from './components/FullscreenCountdown';
 import TabBar from './components/TabBar';
-import PasswordProtect from './components/PasswordProtect';
 import { motion, AnimatePresence } from 'framer-motion';
+
+import { db } from './main';           // Your firebase config file
+import { doc, getDoc } from 'firebase/firestore';
+
+function PasswordProtectFirestore({
+  title,
+  hint,
+  children
+}: {
+  title: string;
+  hint: string;
+  children: React.ReactNode;
+}) {
+  const [password, setPassword] = useState('');
+  const [isAuthorized, setIsAuthorized] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const handlePasswordSubmit = async () => {
+    setLoading(true);
+    try {
+      const docRef = doc(db, 'settings', 'bucketList');
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        const storedPassword = docSnap.data().password;
+        if (password === storedPassword) {
+          setIsAuthorized(true);
+        } else {
+          alert('Incorrect password');
+        }
+      } else {
+        alert('Password config not found.');
+      }
+    } catch (error) {
+      console.error('Error checking password:', error);
+      alert('Something went wrong. Please try again.');
+    }
+    setLoading(false);
+  };
+
+  if (isAuthorized) {
+    return <>{children}</>;
+  }
+
+  return (
+    <div className="flex flex-col items-center justify-center min-h-[300px] p-8 bg-pink-50 rounded shadow-md">
+      <h2 className="text-2xl font-semibold mb-4">{title}</h2>
+      <p className="mb-6 italic text-gray-600">{hint}</p>
+      <input
+        type="password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        placeholder="Enter password"
+        className="p-2 border border-gray-300 rounded w-full max-w-xs"
+        disabled={loading}
+      />
+      <button
+        onClick={handlePasswordSubmit}
+        className="mt-4 bg-pink-500 text-white px-4 py-2 rounded hover:bg-pink-600 disabled:opacity-50"
+        disabled={loading}
+      >
+        {loading ? 'Checking...' : 'Unlock'}
+      </button>
+    </div>
+  );
+}
 
 function App() {
   const [giftOpened, setGiftOpened] = useState(false);
   const [activeTab, setActiveTab] = useState('Home');
-  const [showMainSite, setShowMainSite] = useState(false);// Set to false for countdown
+  const [showMainSite, setShowMainSite] = useState(false); // Set to false for countdown
 
   // Set Sarah's birthday date (YYYY-MM-DD format)
   const birthdayDate = '2025-05-27'; // Sarah's birthday
-
-    // Password for the Love section
-  const lovePassword = "MyWife";
 
   const handleOpenGift = () => {
     setGiftOpened(true);
@@ -73,19 +135,18 @@ function App() {
     {
       label: 'Love',
       content: (
-        <PasswordProtect
-        password={lovePassword}
-        title="Just for your eyes!"
-        hint="Hint: It's something I wish For Daily... 💕"
+        <PasswordProtectFirestore
+          title="Just for your eyes!"
+          hint="Hint: It's something I wish For Daily... 💕"
         >
-        <div className="space-y-16">
-          <LoveLetter />
-          <div className="grid md:grid-cols-2 gap-8">
-            <VideoMessages />
-            <VoiceNotes />
+          <div className="space-y-16">
+            <LoveLetter />
+            <div className="grid md:grid-cols-2 gap-8">
+              <VideoMessages />
+              <VoiceNotes />
+            </div>
           </div>
-        </div>
-        </PasswordProtect>
+        </PasswordProtectFirestore>
       )
     },
     {
@@ -128,7 +189,7 @@ function App() {
   return (
     <AnimatePresence mode="wait">
       {!showMainSite ? (
-        <FullscreenCountdown 
+        <FullscreenCountdown
           key="countdown"
           targetDate={birthdayDate}
           onCountdownComplete={handleCountdownComplete}
@@ -144,7 +205,7 @@ function App() {
           <FloatingHearts />
           <MusicPlayer />
           <BirthdayCountdown />
-          
+
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -162,7 +223,7 @@ function App() {
             </motion.div>
 
             {/* Tab Content */}
-            <motion.main 
+            <motion.main
               key={activeTab}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -170,7 +231,7 @@ function App() {
             >
               {currentTabContent}
             </motion.main>
-            
+
             <Footer />
           </motion.div>
         </motion.div>

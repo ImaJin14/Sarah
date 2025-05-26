@@ -1,43 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Music, Volume2, VolumeX, Pause, Play } from 'lucide-react';
-
-// Define types for the audio manager
-type PlayerID = string;
-type PauseCallback = () => void;
-type ActivePlayer = { id: PlayerID; pause: PauseCallback } | null;
-
-// Create a global audio manager as a singleton
-const AudioManagerSingleton = () => {
-  let instance: {
-    activePlayer: ActivePlayer;
-    registerPlayer: (playerId: PlayerID, pauseCallback: PauseCallback) => void;
-    unregisterPlayer: (playerId: PlayerID) => void;
-  };
-
-  return () => {
-    if (!instance) {
-      instance = {
-        activePlayer: null,
-        registerPlayer: function(playerId: PlayerID, pauseCallback: PauseCallback) {
-          // If there's already an active player, pause it
-          if (this.activePlayer && this.activePlayer.id !== playerId) {
-            this.activePlayer.pause();
-          }
-          this.activePlayer = { id: playerId, pause: pauseCallback };
-        },
-        unregisterPlayer: function(playerId: PlayerID) {
-          if (this.activePlayer && this.activePlayer.id === playerId) {
-            this.activePlayer = null;
-          }
-        }
-      };
-    }
-    return instance;
-  };
-};
-
-// Get the singleton instance
-const getAudioManager = AudioManagerSingleton();
+import GlobalAudioManager from './AudioManager'; // Adjust path as needed
 
 const MusicPlayer: React.FC = () => {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -46,10 +9,9 @@ const MusicPlayer: React.FC = () => {
   const [expanded, setExpanded] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [audioLoaded, setAudioLoaded] = useState(false);
-  const playerIdRef = useRef<PlayerID>(`player-${Math.random().toString(36).substr(2, 9)}`);
-  const audioManager = getAudioManager();
+  const playerIdRef = useRef<string>(`music-player-${Math.random().toString(36).substr(2, 9)}`);
+  const audioManager = GlobalAudioManager.getInstance();
   
-  // Playlist - replace with actual songs your partner loves
   const playlist = [
     {
       name: "Romantic Background Music",
@@ -65,14 +27,12 @@ const MusicPlayer: React.FC = () => {
     }
   };
   
-  // Set up audio element
   useEffect(() => {
     // Create the audio element
     audioRef.current = new Audio(playlist[0].url);
-    audioRef.current.loop = true;
+    audioRef.current.loop = false;
     audioRef.current.volume = volume;
     
-    // Set up event listeners
     const handleCanPlayThrough = () => {
       setAudioLoaded(true);
       console.log("Audio loaded and ready to play");
@@ -80,7 +40,7 @@ const MusicPlayer: React.FC = () => {
       // Try to autoplay when loaded
       if (audioRef.current) {
         // Register with audio manager
-        audioManager.registerPlayer(playerIdRef.current, pauseAudio);
+        audioManager.registerPlayer(playerIdRef.current, pauseAudio, audioRef.current);
         
         // Attempt to play
         audioRef.current.play()
@@ -98,81 +58,13 @@ const MusicPlayer: React.FC = () => {
     // Add event listener for when audio can play
     audioRef.current.addEventListener('canplaythrough', handleCanPlayThrough);
     
-    // Add global media event listeners to detect when other media starts playing
-    const handlePlayEvent = (event: Event) => {
-      const target = event.target as HTMLMediaElement;
-      // Check if the playing media is not our audio element
-      if (target !== audioRef.current && isPlaying && audioRef.current) {
-        audioRef.current.pause();
-        setIsPlaying(false);
-        audioManager.unregisterPlayer(playerIdRef.current);
-      }
-    };
-    
-    // Listen for play events on all media elements
-    document.addEventListener('play', handlePlayEvent, true);
-    
-    // Listen for clicks on "Open your gift" buttons
-    const handleGiftButtonClick = (event: MouseEvent) => {
-      const target = event.target as HTMLElement;
-      
-      // Check if clicked element or its parent is the gift button
-      // Look for elements with text containing "Open your gift" or specific class/id
-      const isGiftButton = (element: HTMLElement | null): boolean => {
-        if (!element) return false;
-        
-        // Check if the element or its children contain "Open your gift" text
-        if (element.textContent?.toLowerCase().includes("open your gift")) {
-          return true;
-        }
-        
-        // Check specific classes or IDs that might be used for gift buttons
-        if (element.classList.contains("gift-button") || 
-            element.id.includes("gift") ||
-            element.getAttribute("aria-label")?.toLowerCase().includes("gift")) {
-          return true;
-        }
-        
-        // Check for data attributes
-        if (element.dataset.gift || element.dataset.type === "gift") {
-          return true;
-        }
-        
-        return false;
-      };
-      
-      // Check the clicked element and its parent elements (up to 3 levels)
-      let currentElement: HTMLElement | null = target;
-      for (let i = 0; i < 3 && currentElement; i++) {
-        if (isGiftButton(currentElement)) {
-          // If a gift button is clicked, pause the audio
-          if (isPlaying && audioRef.current) {
-            console.log("Gift button clicked, pausing audio");
-            audioRef.current.pause();
-            setIsPlaying(false);
-            audioManager.unregisterPlayer(playerIdRef.current);
-          }
-          break;
-        }
-        currentElement = currentElement.parentElement;
-      }
-    };
-    
-    // Listen for all clicks to detect gift button clicks
-    document.addEventListener('click', handleGiftButtonClick, true);
-    
     return () => {
       if (audioRef.current) {
-        // Clean up event listeners
         audioRef.current.removeEventListener('canplaythrough', handleCanPlayThrough);
         audioRef.current.pause();
         audioRef.current.src = "";
         audioManager.unregisterPlayer(playerIdRef.current);
       }
-      
-      // Remove global event listeners
-      document.removeEventListener('play', handlePlayEvent, true);
-      document.removeEventListener('click', handleGiftButtonClick, true);
     };
   }, []);
   
@@ -191,9 +83,8 @@ const MusicPlayer: React.FC = () => {
       audioManager.unregisterPlayer(playerIdRef.current);
     } else {
       // Register with audio manager before playing
-      audioManager.registerPlayer(playerIdRef.current, pauseAudio);
+      audioManager.registerPlayer(playerIdRef.current, pauseAudio, audioRef.current);
       
-      // This promise pattern handles autoplay restrictions
       const playPromise = audioRef.current.play();
       
       if (playPromise !== undefined) {
@@ -203,7 +94,6 @@ const MusicPlayer: React.FC = () => {
           })
           .catch(error => {
             console.error("Playback failed:", error);
-            // Show user interaction required message
             alert("Please click 'Play Music' again to enable the background music");
             audioManager.unregisterPlayer(playerIdRef.current);
           });
